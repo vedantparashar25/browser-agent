@@ -1,0 +1,13 @@
+{
+  "name": "pathfinder",
+  "version": "1.0.0",
+  "description": "PATHFINDER - \"Your Destination, Our Path\" | Voice and Text Driven Autonomous AI Browser Agent Web App",
+  "scripts": {
+    "server": "npm --prefix server start",
+    "client": "npm --prefix client dev",
+    "dev:server": "npm --prefix server dev",
+    "build:client": "npm --prefix client run build",
+    "cli": "node bin/agent.mjs",
+    "mcp": "node bin/mcp-server.mjs"
+  }
+}
