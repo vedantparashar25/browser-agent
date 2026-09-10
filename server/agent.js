@@ -767,11 +767,10 @@ Category: ${intent.type}
 Budget limit: ${intent.maxPrice ? '₹' + intent.maxPrice : 'None specified'}
 
 Voice Assistant Persona Guidelines:
-- In "spokenSummary", speak as Aria in warm, colloquial, natural Hindi-English (Hinglish in Roman script), exactly how a smart, helpful Indian colleague speaks casually.
+- In "spokenSummary", speak as Aria in warm, clear, natural English, greeting the user with "Hello!" and announcing the top pick, verified price, and alternative recommendation.
 - Examples of authentic human phrasing:
-  "Dekhiye, aapke liye sabse badhiya deal mil gayi hai — [product], sirf ₹[price] me Amazon par! Isme [spec/feature] bhi hai. Aur haan, 10% range me alternative [alternative] bhi ready hai ₹[price] me. Kya bolte ho, product link open kar doon?"
-- Use natural connectors: "Dekhiye", "Haan ji", "Aur haan", "Sirf", "Aapke liye", "Kya bolte ho".
-- Keep spokenSummary short, warm, and speakable (1-2 sentences) — strictly NO bullet points, NO markdown, NO robotic formal Hindi words (avoid "anumaan", "anurodh", "kripya").
+  "Hello! I found a great deal for you — [product] at just ₹[price] on Amazon India. It features [spec/feature]. A verified alternative [alternative] is also available at ₹[price]. Would you like me to open the product page?"
+- Keep spokenSummary short, warm, and speakable in natural English (1-2 sentences) — strictly NO bullet points, NO markdown.
 
 Extracted listings from live browser session:
 ${JSON.stringify(rawListings, null, 2)}
@@ -781,38 +780,50 @@ Return a strict JSON object (NO markdown, no backticks, ONLY valid JSON) matchin
   "intent": "${query}",
   "category": "${intent.type}",
   "summary": "2-3 sentence overview of the real products found and why the top pick was chosen",
-  "spokenSummary": "Aria's warm, speakable 1-2 sentence colloquial Hinglish voice readback announcing top pick, price, and 10% alternative",
+  "spokenSummary": "Aria's warm, speakable 1-2 sentence English voice readback greeting with Hello and announcing top pick, price, and alternative",
   "topPick": {
     "title": "Full product title from extracted listings",
     "price": "Formatted price like ₹1,299",
     "originalPrice": "Original price if discounted",
     "discount": "Percentage discount if available",
     "rating": 4.3,
-    "reviewsCount": "Ratings count string",
-    "image": "Image URL from extracted data",
-    "reasoning": "2-line compelling explanation of why this is the best value pick",
-    "specs": ["Key spec 1", "Key spec 2", "Key spec 3", "Key spec 4"],
-    "source": "Store or site name (e.g. Amazon India)",
-    "sourceUrl": "Direct URL",
-    "actionUrl": "Direct URL for user to continue on site",
-    "actionLabel": "View & Continue on Site"
+    "reviewsCount": "184,210+ ratings",
+    "image": "Real product image URL from extracted data",
+    "reasoning": "Clear explanation of why this specific product was chosen as top pick",
+    "specs": [
+      "Key spec 1",
+      "Key spec 2",
+      "Key spec 3"
+    ],
+    "source": "Amazon India",
+    "sourceUrl": "Canonical product URL",
+    "actionUrl": "Direct add to cart or product URL",
+    "actionLabel": "Proceed to Buy on Amazon"
   },
   "alternatives": [
     {
-      "title": "Runner-up alternative item title from the listings",
+      "title": "Alternative product title in category",
       "price": "Formatted price",
-      "rating": 4.1,
-      "source": "Store name",
-      "reasoning": "Why consider this alternative",
-      "actionUrl": "Direct URL"
+      "priceDiff": "e.g. -8% vs Top Pick (Within ±10%)",
+      "rating": 4.2,
+      "source": "Retailer name",
+      "reasoning": "Why this alternative is relevant",
+      "actionUrl": "Direct link"
     }
   ],
   "safetyCheckpoint": {
     "status": "safe_checkpoint_reached",
-    "message": "The agent verified specs & live pricing. Payment and account login require your direct authorization.",
-    "actionUrl": "Top pick URL"
+    "message": "Safe Checkpoint: Product specifications and live pricing verified. Login and payment require user authorization.",
+    "actionUrl": "Canonical URL"
   }
-}`;
+}
+
+Real live extracted listings from the browser:
+${JSON.stringify(rawListings, null, 2)}
+
+Voice Persona:
+- Generate "spokenSummary" as Aria speaking naturally in clear, warm English — greeting the user with "Hello!", announcing the top pick, verified price, and alternative in 1-2 speakable sentences for TTS without markdown or bullet points.
+- Authentic human phrasing example: "Hello! I found the top deal for you — [product] at just ₹[price] on Amazon India. A verified alternative [alt] is also available at ₹[price]. Would you like me to open the product page?"`;
 
     const response = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
@@ -1929,8 +1940,8 @@ Return ONLY a valid JSON object matching the requested schema with intent, categ
       };
 
       const topHighlightsText = keyFeaturesHighlights.slice(0, 2).map(k => `${k.label}: ${k.value}`).join(', ');
-      const correctionPrefix = intent.wasCorrected ? `Maine "${intent.originalQuery}" ko "${intent.cleanQuery}" samajh kar search kiya hai. ` : '';
-      const spokenSummary = `${correctionPrefix}Dekhiye, aapke liye sabse badhiya deal mil gayi hai — ${winner.title.slice(0, 34)}, sirf ${winner.price} me Amazon par! Aur haan, 10% budget range me alternative ${tenPercentAlternative.title.slice(0, 26)} bhi ready hai ${tenPercentAlternative.price} me. Kya bolte ho, product link open kar doon?`;
+      const correctionPrefix = intent.wasCorrected ? `I searched for "${intent.cleanQuery}" based on your query. ` : '';
+      const spokenSummary = `${correctionPrefix}Hello! I found the best deal for you — ${winner.title.slice(0, 34)}, at just ${winner.price} on ${winner.source || 'Amazon India'}. A verified alternative ${tenPercentAlternative.title.slice(0, 26)} is also ready at ${tenPercentAlternative.price}. Would you like me to open the product link?`;
 
       // Filter alternatives to strictly fall within ±10% of the given price
       const min10 = Math.round((winner.numPrice || 1299) * 0.9);
@@ -2426,8 +2437,8 @@ Return ONLY a valid JSON object matching the requested schema with intent, categ
     };
 
     const topHighlightsText = keyFeaturesHighlights.slice(0, 2).map(k => `${k.label}: ${k.value}`).join(', ');
-    const correctionPrefix = intent.wasCorrected ? `Maine "${intent.originalQuery}" ko "${intent.cleanQuery}" samajh kar search kiya hai. ` : '';
-    const spokenSummary = `${correctionPrefix}Dekhiye, aapke liye sabse badhiya deal mil gayi hai — ${cleanTitle.slice(0, 34)}, sirf ${budget} me Amazon par! Aur haan, 10% price bracket me ${tenPercentAlternative.title.slice(0, 26)} bhi ready hai ${tenPercentAlternative.price} me. Kya bolte ho, product link open kar doon?`;
+    const correctionPrefix = intent.wasCorrected ? `I searched for "${intent.cleanQuery}" based on your query. ` : '';
+    const spokenSummary = `${correctionPrefix}Hello! I found the best deal for you — ${cleanTitle.slice(0, 34)}, at just ${budget} on Amazon India. A verified alternative ${tenPercentAlternative.title.slice(0, 26)} is also ready at ${tenPercentAlternative.price}. Would you like me to open the product link?`;
 
     const min10 = Math.round(numPrice * 0.9);
     const max10 = Math.round(numPrice * 1.1);

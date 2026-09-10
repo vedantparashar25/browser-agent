@@ -18,7 +18,7 @@ const DEFAULT_INITIAL_RESULT = {
   intent: "wireless earbuds under 2000 rupees",
   category: "shop",
   summary: "Autonomous Playwright browsing discovered the top value choice: boAt Airdopes 141 ANC with 32dB Active Noise Cancellation, 42H playtime, and ₹1,299 deal price.",
-  spokenSummary: "Namaste! Maine aapke liye boAt Airdopes 141 ANC find kiya hai, bas ₹1,299 me Amazon par! Isme 32dB active noise cancellation hai. Aur usi category me 10% budget range ka Noise Buds alternative bhi ready hai ₹1,199 me. Bataiye, kya main direct link open kar doon?",
+  spokenSummary: "Hello! I found the top value deal for you: boAt Airdopes 141 ANC at just ₹1,299 on Amazon India. It features 32dB active noise cancellation, and a verified alternative is also available at ₹1,199. Would you like me to open the direct product page?",
   topPick: {
     title: "boAt Airdopes 141 ANC TWS Earbuds (42H Playtime, 32dB ANC, Fast Charge)",
     price: "₹1,299",
