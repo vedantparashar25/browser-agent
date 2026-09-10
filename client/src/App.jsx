@@ -337,12 +337,12 @@ function App() {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.lang = 'en-IN';
+      recognition.lang = 'en-US';
 
       recognition.onstart = () => {
         setIsListening(true);
         voiceEngine.setState('LISTENING');
-        setAssistantMessage("Sun rahi hoon! Boliye, main sun rahi hoon...");
+        setAssistantMessage("Listening! How can I help you?");
       };
 
       recognition.onresult = (event) => {
@@ -351,16 +351,16 @@ function App() {
         setIsListening(false);
         voiceEngine.setState('THINKING');
 
-        // Check for vocal barge-in stop commands ("stop", "ruko", "cancel", "bas", "chup")
+        // Check for vocal barge-in stop commands ("stop", "cancel", "pause", "quiet")
         const lower = transcript.toLowerCase().trim();
-        if (lower === 'stop' || lower === 'cancel' || lower === 'ruko' || lower === 'chup' || lower === 'bas' || lower.startsWith('stop')) {
+        if (lower === 'stop' || lower === 'cancel' || lower === 'pause' || lower === 'quiet' || lower.startsWith('stop')) {
           voiceEngine.interrupt('voice_stop_command');
-          setAssistantMessage("Theek hai, maine speech rok di hai. Boliye, aage kya karna hai?");
+          setAssistantMessage("Alright, I stopped speaking. How can I help you next?");
           return;
         }
 
-        const ackSpeech = "Haan ji! Bas ek second, main check karti hoon...";
-        setAssistantMessage(`Haan ji! Bas ek second, main "${transcript}" check karti hoon...`);
+        const ackSpeech = "Sure! Let me check that for you...";
+        setAssistantMessage(`Sure! Looking up "${transcript}" for you right now...`);
         if (voiceEnabled) {
           voiceEngine.speak(ackSpeech, () => {
             handleRunQuery(transcript);
@@ -373,7 +373,7 @@ function App() {
       recognition.onerror = () => {
         setIsListening(false);
         voiceEngine.setState('IDLE');
-        setAssistantMessage("Maaf kijiye, main theek se sun nahi paayi. Kya aap ek baar phir bolenge?");
+        setAssistantMessage("I'm sorry, I couldn't hear that clearly. Could you please say that again?");
       };
 
       recognition.onend = () => {
@@ -432,8 +432,8 @@ function App() {
               setIsPlacingOrder(false);
               setOrderStatus(data);
               const confirmationSpeech = data.clicked
-                ? "Ho gaya ji! Checkout section open ho gaya hai. Aap aaram se verify karke confirm kar lijiye."
-                : "Ho gaya ji! Safe direct checkout link ready hai, aap aaram se check kar lijiye.";
+                ? "All set! The secure checkout section is open. Please review and confirm your order."
+                : "All set! The safe direct checkout link is ready for you to review.";
               setAssistantMessage(confirmationSpeech);
               if (voiceEnabled) {
                 voiceEngine.speak(confirmationSpeech);
@@ -539,7 +539,7 @@ function App() {
   const handlePlaceOrder = (productUrl) => {
     if (!productUrl || isPlacingOrder) return;
     setIsPlacingOrder(true);
-    const stagingSpeech = "Haan ji! Main product page open karke checkout safely stage kar rahi hoon...";
+    const stagingSpeech = "Opening the verified product page and staging secure checkout for you...";
     setOrderStatus({ message: stagingSpeech });
     setAssistantMessage(stagingSpeech);
     if (voiceEnabled) voiceEngine.speak(stagingSpeech);

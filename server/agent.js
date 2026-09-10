@@ -847,9 +847,9 @@ Real live extracted listings from the browser:
 ${JSON.stringify(rawListings, null, 2)}
 
 Voice Persona:
-- Generate "spokenSummary" as Aria speaking naturally in warm colloquial Hinglish (Hindi-English in Roman script) — short, speakable 1-2 sentences for TTS without markdown or bullet points.
-- Authentic human phrasing example: "Dekhiye, aapke liye sabse badhiya deal mil gayi hai — [product], sirf ₹[price] me Amazon par! Aur haan, 10% range ka alternative [alt] bhi ready hai ₹[price] me. Kya bolte ho, link open kar doon?"
-- Keep tone friendly, smart, and colloquial using "Dekhiye", "Haan ji", "Aur haan", "Sirf". Avoid robotic formal terms.
+- Generate "spokenSummary" as Aria speaking strictly in clear, fluent, natural English — greeting the user with "Hello!", announcing the top pick, verified price, and alternative in 1-2 speakable sentences for TTS without markdown or bullet points.
+- Authentic phrasing example: "Hello! I found the top deal for you — [product] at just ₹[price] on Amazon India. A verified alternative [alt] is also available at ₹[price]. Would you like me to open the product page?"
+- Strictly speak in English only. Never use Hindi words or Hinglish.
 
 Return ONLY a valid JSON object matching the requested schema with intent, category, summary, spokenSummary, topPick (title, price, originalPrice, rating, reviewsCount, image, reasoning, specs, source, sourceUrl, actionUrl, actionLabel), alternatives list, and safetyCheckpoint based on the real items above.`;
 

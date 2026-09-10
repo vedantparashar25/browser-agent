@@ -98,36 +98,23 @@ export function normalizeTextForSpeech(rawText) {
 
   // 9. Natural Symbols
   text = text.replace(/\s*\+\s*/g, ' plus ');
-  text = text.replace(/\s*\/\s*/g, ' ya ');
+  text = text.replace(/\s*\/\s*/g, ' or ');
 
-  // 10. Conversational Hindi Micro-Pause & Connector Polish
-  // In native Hindi speech, humans naturally pause before connectors (aur haan, jisme, jo ki, lekin, etc.)
-  // Inserting a gentle comma provides a natural breathing pause for the TTS engine.
-  const HINDI_CONNECTORS = [
-    'aur haan',
-    'jisme',
-    'jo ki',
-    'lekin',
-    'waise',
-    'kyunki',
-    'matlab',
-    'taaki'
+  // 10. Natural English Micro-Pause & Connector Polish
+  // Adds natural conversational breath pauses before transition words
+  const ENGLISH_CONNECTORS = [
+    'as well as',
+    'in addition',
+    'furthermore',
+    'however',
+    'such as',
+    'specifically',
+    'for instance'
   ];
-  for (const conn of HINDI_CONNECTORS) {
-    // Look for connector that is preceded by a word (not already preceded by comma, period, or exclamation)
+  for (const conn of ENGLISH_CONNECTORS) {
     const regex = new RegExp(`(?<=[a-zA-Z0-9])\\s+(${conn})\\b`, 'gi');
     text = text.replace(regex, ', $1');
   }
-
-  // 11. Conversational Hindi Phonetic Nuance Replacements
-  // Ensures Indian English/Hindi TTS voices don't mispronounce or slur common spoken words
-  text = text
-    .replace(/\bhaanji\b/gi, 'Haan ji')
-    .replace(/\bdhoondh/gi, 'dhundh')
-    .replace(/\bdhoond/gi, 'dhundh')
-    .replace(/\bchahiye\b/gi, 'chaahiye')
-    .replace(/\bswagat\b/gi, 'swaagat')
-    .replace(/\bkaroon\b/gi, 'kar doon');
 
   // 12. Clean up Whitespace and Punctuation for Speech
   text = text

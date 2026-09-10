@@ -86,9 +86,10 @@ export class VoiceEngine {
       if (match) return match;
     }
 
-    // Fallback to any en-IN or English female voice
-    const fallback = this.voices.find(v => v.lang === 'en-IN' && !v.name.toLowerCase().includes('male'))
+    // Fallback strictly to natural English female voices
+    const fallback = this.voices.find(v => (v.lang === 'en-US' || v.lang === 'en-GB') && !v.name.toLowerCase().includes('male'))
       || this.voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
+      || this.voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB')
       || this.voices.find(v => v.lang.startsWith('en'))
       || this.voices[0];
 
@@ -261,6 +262,9 @@ export class VoiceEngine {
     const utterance = new SpeechSynthesisUtterance(item.text);
     if (this.selectedVoice) {
       utterance.voice = this.selectedVoice;
+      utterance.lang = this.selectedVoice.lang || 'en-US';
+    } else {
+      utterance.lang = 'en-US';
     }
 
     // Apply Aria prosody
