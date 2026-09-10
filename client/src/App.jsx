@@ -11,7 +11,7 @@ import BrowserChrome from './components/browser/BrowserChrome';
 import { voiceEngine } from './services/voice/voiceEngine';
 import { STORE_CATALOGS, getStoreByUrl } from './services/storeCatalogs';
 
-const WS_URL = 'ws://localhost:5000';
+const WS_URL = import.meta.env.VITE_BACKEND_WS_URL || 'ws://localhost:5000';
 
 // Default Initial Recommendation so graph and correct image are rendered immediately on browser open
 const DEFAULT_INITIAL_RESULT = {

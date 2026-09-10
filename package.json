@@ -6,6 +6,7 @@
     "server": "npm --prefix server start",
     "client": "npm --prefix client dev",
     "dev:server": "npm --prefix server dev",
+    "build": "cd client && npm install && npm run build",
     "build:client": "npm --prefix client run build",
     "cli": "node bin/agent.mjs",
     "mcp": "node bin/mcp-server.mjs"
